@@ -1,34 +1,51 @@
-/**
- * Some predefined delay values (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
+
+
+
+import { LlmChunkTool, Message } from 'multi-llm-ts';
+import { LLM } from './libs/llm.js';
+import { McpTool } from './mcp/llm-plugin.js';
+import { MCPClient } from './mcp/mcp-client.js';
+
+export const main = async () => {
+
+  const llm = new LLM()  
+
+  const mcps = ['search-tools']
+
+  for (const name of mcps) {
+    console.log(`Adding MCP ${name}`)
+    const mcp = new MCPClient(name)
+    await mcp.init()
+
+    const tools = await mcp.listTools()
+    llm.registerMcpTools(tools as McpTool[], mcp)
+  }
+  
+  await llm.init()
+
+  const messages = [
+    new Message('system', 'You are a helpful assistant'),
+    new Message('user', `
+Search for recent news in Trentino Alto Adige to date ${new Date().toDateString()}. 
+Provide a summary of key events. 
+Answer in Italian. 
+Provide links
+`),
+  ]
+  // const res =  await llm.complete(messages)
+  const stream =  await llm.generate(messages)
+
+  let response = ''
+  const toolCalls: LlmChunkTool[] = []
+  for await (const chunk of stream) {
+    if (chunk.type == 'content') response += chunk.text
+    else if (chunk.type == 'tool') toolCalls.push(chunk)
+  }
+
+  console.log('response', response)
+  // console.log('toolCalls', toolCalls)
+
+  
 }
 
-/**
- * Returns a Promise<string> that resolves after a given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - A number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(
-  name: string,
-  delay: number = Delays.Medium,
-): Promise<string> {
-  return new Promise((resolve: (value?: string) => void) =>
-    setTimeout(() => resolve(`Hello, ${name}`), delay),
-  );
-}
-
-// Please see the comment in the .eslintrc.json file about the suppressed rule!
-// Below is an example of how to use ESLint errors suppression. You can read more
-// at https://eslint.org/docs/latest/user-guide/configuring/rules#disabling-rules
-
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any
-export async function greeter(name: any) {
-  // The name parameter should be of type string. Any is used only to trigger the rule.
-  return await delayedHello(name, Delays.Long);
-}
+main().catch(e => console.error(e))
