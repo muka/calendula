@@ -8,3 +8,7 @@ tasks:
   qdrant-stop:
     cmds:
       - docker stop qdrant1 || true
+
+  docker-build:
+    cmds:
+      - docker compose build

@@ -1,0 +1,36 @@
+networks:
+  mcp:
+
+
+services:
+
+  proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp-proxy
+    image: mcp-proxy/base
+    networks:
+      - mcp
+    volumes:
+      - ./mcp/proxy.json:/app/mcp-proxy-server/config.json
+    depends_on:
+      - arxiv
+      - fetch
+    ports:
+      - 3006:3006
+
+  arxiv:
+    build:
+      context: ./mcp
+      dockerfile: Dockerfile.arxiv-mcp-server
+    image: mcp-proxy/arxiv-mcp-server
+    networks:
+      - mcp
+
+  fetch:
+    build:
+      context: ./mcp
+      dockerfile: Dockerfile.fetch
+    image: mcp-proxy/fetch
+    networks:
+      - mcp
