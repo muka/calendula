@@ -15,16 +15,9 @@ Create a `.env` in the root folder, mandatory fields are the api keys the rest i
 OPENAI_API_KEY=...
 SERPER_API_KEY=...
 
-MCP_SERVER_URL=http://localhost:9999/mcp
-
-MCP_SERVER_PREFIX=/mcp
-MCP_SERVER_PORT=9999
-
-PROVIDER=openai
-OPENAI_MODEL=gpt-4o-mini
 ```
 
-### Proxy setup
+### MCP setup
 
 Allow to run SSE proxies 
 
@@ -34,11 +27,5 @@ The SSE transport will be available at `http://localhost:3006/sse`
 
 ## Usage
 
-Terminal 1
-
-`npm run dev:client`
-
-Terminal 2
-
-`npm run dev:server`
+`npm run dev`
 
