@@ -1,51 +1,74 @@
 
 
 
-import { LlmChunkTool, Message } from 'multi-llm-ts';
-import { LLM } from './libs/llm.js';
-import { McpTool } from './mcp/llm-plugin.js';
-import { MCPClient } from './mcp/mcp-client.js';
+import { Agent, createAgent } from './libs/agent.js';
 
 export const main = async () => {
 
-  const llm = new LLM()  
+  const researcher = await createAgent({
+    role: 'LLM agent researcher',
+    capabilities: 'search for documented best practices for LLM agents'
+  })
 
-  const mcps = ['search-tools']
+  const evaluator = await createAgent({
+    role: 'evaluate LLM prompt',
+    capabilities: 'carefully evaluate LLM prompts and report improvements'
+  })
 
-  for (const name of mcps) {
-    console.log(`Adding MCP ${name}`)
-    const mcp = new MCPClient(name)
-    await mcp.init()
 
-    const tools = await mcp.listTools()
-    llm.registerMcpTools(tools as McpTool[], mcp)
-  }
-  
-  await llm.init()
+  const promptSample = await researcher.run(`
+Create a prompt for an LLM agent that enable parametrized task planning. 
+Provide only the prompt as text and add variables placeholder in braces paretheses to be used in a programmatic way.
+`)
+  console.log('\npromptSample', promptSample)
 
-  const messages = [
-    new Message('system', 'You are a helpful assistant'),
-    new Message('user', `
-Search for recent news in Trentino Alto Adige to date ${new Date().toDateString()}. 
-Provide a summary of key events. 
-Answer in Italian. 
-Provide links
-`),
-  ]
-  // const res =  await llm.complete(messages)
-  const stream =  await llm.generate(messages)
+  const improvements = await evaluator.run(
+`Improve the following LLM prompt for parametrized task planning. 
+Return a markdon list with precise improvement suggestions. 
 
-  let response = ''
-  const toolCalls: LlmChunkTool[] = []
-  for await (const chunk of stream) {
-    if (chunk.type == 'content') response += chunk.text
-    else if (chunk.type == 'tool') toolCalls.push(chunk)
-  }
+PROMPT: 
+${promptSample}
+`
+  )
 
-  console.log('response', response)
-  // console.log('toolCalls', toolCalls)
+  console.log('\nimprovements', improvements)
 
-  
+    const improvedPrompt = await researcher.run(`
+Improve the prompt based on the following suggestions
+${improvements}
+
+The revised prompt must address precisely the suggestions, wihtout undecided options.
+Return only the prompt text without additional comments
+`)
+
+console.log('\nimprovedPrompt', improvedPrompt)
+      
+    const tester = await createAgent({
+      role: "LLM prompt tester",
+      capabilities: "Test LLM prompts and evaluate the quality of response."
+    })
+
+    const promptTestResult = await tester.run(improvedPrompt)
+    console.log(`\npromptTestResult`, promptTestResult)
+
+    const resEval = await tester.run(`
+Evaluate the response of the previous prompt. Only answer with your feedbacks to improve the LLM prompt as generic framework to create planning for tasks. 
+
+${promptTestResult}`)
+
+    console.log(`\nresEval`, resEval)
+
+
+
+    const improvedPrompt2 = await researcher.run(`
+Improve again the prompt based on the feedbacks collected from the LLM prompt usage. Answer only with the LLM prompt.
+
+Feedbacks
+${resEval}
+`)
+
+    console.log('\nimprovedPrompt2', improvedPrompt2)
+
 }
 
 main().catch(e => console.error(e))

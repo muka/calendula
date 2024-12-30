@@ -28,9 +28,7 @@
     "vitest": "~2.1"
   },
   "scripts": {
-    "dev:client": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'tsx src/main.ts'",
-    "dev:server": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'tsx src/mcp/mcp-server.ts'",
-    "dev:proxy": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'tsx src/mcp/mcp-proxy.ts'",
+    "dev": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'tsx src/main.ts'",
     "start": "node build/src/main.js",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
@@ -52,7 +50,7 @@
     "dotenv": "^16.4.7",
     "eventsource": "^3.0.2",
     "express": "^4.21.2",
-    "fastmcp": "^1.5.5",
+    "fastmcp": "^1.5.9",
     "glob": "^11.0.0",
     "js-yaml": "^4.1.0",
     "multi-llm-ts": "^2.4.11",

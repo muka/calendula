@@ -4,7 +4,7 @@ RUN uv venv
 RUN git clone https://github.com/modelcontextprotocol/servers
 RUN cd servers/src/fetch && uv pip install .
 
-COPY <<EOF /app/mcp-proxy-server/config.json
+COPY <<EOF /opt/mcp-proxy-server/config.json
 {
   "servers": [
     {

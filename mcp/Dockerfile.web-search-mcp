@@ -1,0 +1,23 @@
+FROM mcp-proxy/base
+
+WORKDIR /
+RUN git clone https://github.com/muka/web-search-mcp
+RUN cd web-search-mcp && npm i && npm run build
+
+
+COPY <<EOF /opt/mcp-proxy-server/config.json
+{
+  "servers": [
+    {
+        "name": "fetch-mcp-server",
+        "transport": {
+            "command": "node",
+            "args": [ "/web-search-mcp/build/src/main.js" ],
+            "env": ["SERPER_API_KEY"]
+        }
+    }
+  ]
+}
+EOF
+
+WORKDIR /opt/mcp-proxy-server

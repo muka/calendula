@@ -1,17 +1,10 @@
 {
     "servers": [
         {
-            "name": "arxiv",
+            "name": "web-search",
             "transport": {
                 "type": "sse",
-                "url": "http://arxiv:3006/sse"
-            }
-        },
-        {
-            "name": "fetch",
-            "transport": {
-                "type": "sse",
-                "url": "http://fetch:3006/sse"
+                "url": "http://web-search:3006/sse"
             }
         }
     ]

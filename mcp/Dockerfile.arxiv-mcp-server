@@ -3,7 +3,7 @@ FROM mcp-proxy/base
 RUN uv venv
 RUN uv pip install git+https://github.com/blazickjp/arxiv-mcp-server.git
 
-COPY <<EOF /app/mcp-proxy-server/config.json
+COPY <<EOF /opt/mcp-proxy-server/config.json
 {
   "servers": [
     {

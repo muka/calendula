@@ -30,8 +30,6 @@ Allow to run SSE proxies
 
 `docker compose up -d`
 
-Restart `proxy` until it connects, sometimes it fails and there is no retry option.
-
 The SSE transport will be available at `http://localhost:3006/sse`
 
 ## Usage

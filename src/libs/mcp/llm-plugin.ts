@@ -1,11 +1,10 @@
 import { Plugin, PluginParameter } from "multi-llm-ts"
 import { MCPClient } from "./mcp-client.js"
-import { ToolInput } from "./mcp-proxy.js"
 
 export type McpTool = {
     name: string
     description: string
-    inputSchema: ToolInput
+    inputSchema: any
 }
 
 export class McpToolPlugin extends Plugin {
@@ -38,7 +37,7 @@ export class McpToolPlugin extends Plugin {
         
         const parameters: PluginParameter[] = []
 
-        const schema = this.tool.inputSchema as ToolInput
+        const schema = this.tool.inputSchema
 
         // console.log(schema)
 
@@ -65,7 +64,7 @@ export class McpToolPlugin extends Plugin {
             name: this.tool.name,
             arguments: args
         })
-        console.log('execute', res)
+        // console.log('execute', res)
         return res || ''
       }  
 }

@@ -12,25 +12,39 @@ services:
     networks:
       - mcp
     volumes:
-      - ./mcp/proxy.json:/app/mcp-proxy-server/config.json
-    depends_on:
-      - arxiv
-      - fetch
+      - ./mcp/proxy.json:/opt/mcp-proxy-server/config.json
     ports:
       - 3006:3006
+    environment:
+      - KEEP_SERVER_OPEN=1
 
-  arxiv:
+  # arxiv:
+  #   build:
+  #     context: ./mcp
+  #     dockerfile: Dockerfile.arxiv-mcp-server
+  #   image: mcp-proxy/arxiv-mcp-server
+  #   networks:
+  #     - mcp
+  #   environment:
+  #     - KEEP_SERVER_OPEN=1
+
+  # fetch:
+  #   build:
+  #     context: ./mcp
+  #     dockerfile: Dockerfile.fetch
+  #   image: mcp-proxy/fetch
+  #   networks:
+  #     - mcp
+  #   environment:
+  #     - KEEP_SERVER_OPEN=1
+
+  web-search:
     build:
       context: ./mcp
-      dockerfile: Dockerfile.arxiv-mcp-server
-    image: mcp-proxy/arxiv-mcp-server
+      dockerfile: Dockerfile.web-search-mcp
+    image: mcp-proxy/web-search
     networks:
       - mcp
-
-  fetch:
-    build:
-      context: ./mcp
-      dockerfile: Dockerfile.fetch
-    image: mcp-proxy/fetch
-    networks:
-      - mcp
+    environment:
+      - KEEP_SERVER_OPEN=1
+      - SERPER_API_KEY=${SERPER_API_KEY}

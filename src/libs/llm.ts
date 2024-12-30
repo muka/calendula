@@ -1,6 +1,6 @@
 import { igniteEngine, LlmChunk, LlmCompletionOpts, LlmEngine, LlmResponse, Message, Plugin } from "multi-llm-ts";
-import { McpTool, McpToolPlugin } from "../mcp/llm-plugin.js";
-import { MCPClient } from "../mcp/mcp-client.js";
+import { McpTool, McpToolPlugin } from "./mcp/llm-plugin.js";
+import { MCPClient } from "./mcp/mcp-client.js";
 import { config } from "./config.js";
 
 
@@ -32,7 +32,10 @@ export class LLM {
     }
 
     registerMcpTools(tools: McpTool[], mcp: MCPClient) {
-        tools.forEach(t => this.addPlugin(new McpToolPlugin(t, mcp)))
+        tools.forEach(t => {
+            console.log(`LLM adding tool ${t.name}`)
+            this.addPlugin(new McpToolPlugin(t, mcp))
+        })
     }
 
 }
