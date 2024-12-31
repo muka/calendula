@@ -1,27 +1,44 @@
+import clc from "cli-color";
 import { LlmChunkTool, Message } from 'multi-llm-ts';
+import { v4 as uuid } from "uuid";
 import { LLM } from './llm.js';
 import { McpTool } from './mcp/llm-plugin.js';
 import { MCPClient } from './mcp/mcp-client.js';
+
+export type Colors = "red" | "green" | "yellow" | "blue" | "magenta" | "cyan" | "white"
 
 type AgentConfig = {
   role: string
   capabilities: string
   tools?: string[]
+  color?: Colors
 }
 
 export class Agent {
   
+  public readonly id: string
+
   private mcp: MCPClient
   private llm: LLM
 
   private history: Message[] = []
 
   constructor(private readonly config: AgentConfig) {
+    this.id = uuid()
     this.llm = new LLM()  
+  }
+
+  log(message: string, context?: string) {
+    const color = this.config.color || 'cyan'
+    console.log(`${clc[color]( this.config.role + (context ? ' -> ' + context : '') )}\n ${message}\n\n`)
   }
 
   getHistory() {
     return this.history
+  }
+
+  getConfig() {
+    return this.config
   }
 
   async loadTools() {
@@ -39,20 +56,29 @@ export class Agent {
     await this.llm.init()
   }
 
-  async run(task: string) {
-    const messages = [
-      new Message('system', `
-You are a ${this.config.role} proficient in ${this.config.capabilities}. 
-Today is ${new Date().toString()}.
-Return only the response without additional comments or explanations.
-`),
-      new Message('user', `Task: ${task}`),
-    ]
+  async run(messages: string | Message | Message[]) {
 
-    const stream = await this.llm.generate([
-      ...this.getHistory(),
-      ...messages
-    ])
+    if (typeof messages === 'string') {
+      messages = [new Message('user', messages)]
+    } else if (messages instanceof Array) {
+      messages = messages as Message[]
+    } else {
+      messages = [messages as Message]
+    }
+
+    if (!this.history.length) {
+      this.history.push(new Message('system', `
+        You are a ${this.config.role} proficient in ${this.config.capabilities}. 
+        Today is ${new Date().toString()}.
+        Return only the response without additional comments or explanations.
+        `))
+    }
+
+    this.history.push(...messages)
+
+    const stream = await this.llm.generate(
+      this.getHistory(),
+    )
 
     let response = ''
     const toolCalls: LlmChunkTool[] = []
@@ -61,9 +87,6 @@ Return only the response without additional comments or explanations.
       else if (chunk.type == 'tool') toolCalls.push(chunk)
     }
 
-    // console.log('response', response)
-
-    this.history.push(...messages)
     this.history.push(new Message('assistant', response))
 
     return response

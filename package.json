@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@eslint/js": "~9.10",
+    "@types/cli-color": "^2.0.6",
     "@types/eslint__js": "~8.42",
     "@types/express": "^5.0.0",
     "@types/js-yaml": "^4.0.9",
@@ -47,6 +48,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
     "axios": "^1.7.9",
+    "cli-color": "^2.0.4",
     "dotenv": "^16.4.7",
     "eventsource": "^3.0.2",
     "express": "^4.21.2",
@@ -55,6 +57,7 @@
     "js-yaml": "^4.1.0",
     "multi-llm-ts": "^2.4.11",
     "tslib": "~2.7",
+    "uuid": "^11.0.3",
     "zod": "^3.24.1",
     "zod-to-json-schema": "^3.24.1"
   },
