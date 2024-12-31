@@ -6,6 +6,20 @@
                 "type": "sse",
                 "url": "http://web-search:3006/sse"
             }
+        },
+        {
+            "name": "github",
+            "transport": {
+                "type": "sse",
+                "url": "http://github:3006/sse"
+            }
+        },
+        {
+            "name": "workbench",
+            "transport": {
+                "type": "sse",
+                "url": "http://172.17.0.1:3008/sse"
+            }
         }
     ]
 }

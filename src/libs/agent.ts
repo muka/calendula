@@ -43,6 +43,15 @@ export class Agent {
 
   async loadTools() {
     const tools = await this.mcp.listTools()
+
+    if (this.config.tools.length) {
+      for (const toolName of this.config.tools) {
+        if (!tools.filter(t => t.name === toolName).length) {
+          throw new Error(`Required tool ${toolName} not found`)
+        }
+      }
+    }
+
     this.llm.registerMcpTools(tools as McpTool[], this.mcp)
   }
 

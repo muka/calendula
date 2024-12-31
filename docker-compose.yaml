@@ -48,3 +48,14 @@ services:
     environment:
       - KEEP_SERVER_OPEN=1
       - SERPER_API_KEY=${SERPER_API_KEY}
+
+  github:
+    build:
+      context: ./mcp
+      dockerfile: Dockerfile.github
+    image: mcp-proxy/github
+    networks:
+      - mcp
+    environment:
+      - KEEP_SERVER_OPEN=1
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}

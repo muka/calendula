@@ -1,0 +1,19 @@
+FROM mcp-proxy/base
+
+RUN git clone https://github.com/modelcontextprotocol/servers
+RUN cd servers/src/github && npm i  &&  npm i -g 
+
+COPY <<EOF /opt/mcp-proxy-server/config.json
+{
+  "servers": [
+    {
+        "name": "github",
+        "transport": {
+            "command": "npx",
+            "args": [ "-y", "@modelcontextprotocol/server-github" ]
+            "env": [ "GITHUB_PERSONAL_ACCESS_TOKEN" ]
+        }
+    }
+  ]
+}
+EOF

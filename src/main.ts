@@ -35,9 +35,16 @@ export const main = async () => {
     color: 'yellow'
   })
 
+  const executor = await createAgent({
+    role: "builder",
+    capabilities: "Create the application on filesystem based on the output of the other agent.",
+    color: 'red',
+    tools: ['save_file', 'mkdir']
+  })
+
   const coordinator = await createCoordinator({
     agents: [
-      architect, developer, evaluator, tester, devops
+      architect, developer, evaluator, tester, devops, executor
     ],
     color: 'blue',
   })
