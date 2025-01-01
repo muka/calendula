@@ -36,22 +36,22 @@ export class McpToolPlugin extends Plugin {
       getParameters(): PluginParameter[] {
         
         const parameters: PluginParameter[] = []
-
         const schema = this.tool.inputSchema
-
-        // console.log(schema)
 
         for (const name in schema.properties) {
             
-            const props = schema.properties[name] as {description?: string, type: string }
+            const props = schema.properties[name] as {description?: string, type: string, items?: any }
             const required = ((schema.required || []) as string[]).indexOf(name) > -1
 
-            parameters.push({
-                name,
-                description: props.description,
-                type: props.type,
-                required
-            })
+            const parameter = {
+              name,
+              description: props.description,
+              type: props.type,
+              required,
+              items: props.items
+            }
+            parameters.push(parameter)
+
         }
 
         return parameters

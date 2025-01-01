@@ -36,10 +36,10 @@ export const main = async () => {
   })
 
   const executor = await createAgent({
-    role: "builder",
-    capabilities: "Create the application on filesystem based on the output of the other agent.",
+    role: "filesystem executor",
+    capabilities: "Interact with the filesystem to update the codebase with the agent generated contents.",
     color: 'red',
-    tools: ['save_file', 'mkdir']
+    // tools: ['read_file', 'write_file', 'create_directory', 'list_directory', 'search_files', 'get_file_info']
   })
 
   const coordinator = await createCoordinator({

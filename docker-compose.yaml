@@ -59,3 +59,15 @@ services:
     environment:
       - KEEP_SERVER_OPEN=1
       - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}
+
+  filesystem:
+    build:
+      context: ./mcp
+      dockerfile: Dockerfile.filesystem
+    image: mcp-proxy/filesystem
+    networks:
+      - mcp
+    environment:
+      - KEEP_SERVER_OPEN=1
+    volumes:
+      - ./data/fs:/data

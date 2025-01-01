@@ -44,7 +44,7 @@ export class Agent {
   async loadTools() {
     const tools = await this.mcp.listTools()
 
-    if (this.config.tools.length) {
+    if (this.config.tools?.length) {
       for (const toolName of this.config.tools) {
         if (!tools.filter(t => t.name === toolName).length) {
           throw new Error(`Required tool ${toolName} not found`)
@@ -77,10 +77,8 @@ export class Agent {
 
     if (!this.history.length) {
       this.history.push(new Message('system', `
-        You are a ${this.config.role} proficient in ${this.config.capabilities}. 
-        Today is ${new Date().toString()}.
-        Return only the response without additional comments or explanations.
-        `))
+You are a ${this.config.role} proficient in ${this.config.capabilities}. 
+Return only the response without additional comments or explanations.`))
     }
 
     this.history.push(...messages)

@@ -15,10 +15,10 @@
             }
         },
         {
-            "name": "workbench",
+            "name": "filesystem",
             "transport": {
                 "type": "sse",
-                "url": "http://172.17.0.1:3008/sse"
+                "url": "http://filesystem:3006/sse"
             }
         }
     ]
