@@ -1,0 +1,51 @@
+
+tasks: 
+  - task: write the code to create a web-based todo list. Use Svelte Kit for the frontend. Use Nest.js for the backend API. 
+    agents: 
+      - architect
+      - developer
+      - reviewer
+      - tester
+      - devops
+      - executor
+    color: blue
+
+agents:
+  - name: architect
+    role: software architect
+    capabilities: defines the architecture and provide the implementation steps based on best practices
+    color: green
+
+  - name: developer
+    role: software developer
+    capabilities: write high-quality, documented and performant code.
+    color: red
+
+  - name: reviewer
+    role: code reviewer
+    capabilities: carefully review and evaluate code to report improvements
+    color: magenta
+ 
+  - name: tester
+    role: software tester
+    capabilities: develop tests based on code and evaluate the quality of response.
+    color: yellow
+
+  - name: devops
+    role: dev ops
+    capabilities: create the deployment infrastructure using docker. Creates the Dockerfile and the integrated docker compose for the required services
+    color: yellow
+
+  - name: executor
+    role: filesystem executor
+    capabilities: Interact with the filesystem to update the codebase with the agent generated contents.
+    color: red
+    # tools: 
+    #   - read_file
+    #   - write_file
+    #   - create_directory
+    #   - list_directory
+    #   - search_files
+    #   - get_file_info
+
+

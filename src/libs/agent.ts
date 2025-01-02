@@ -7,7 +7,8 @@ import { MCPClient } from './mcp/mcp-client.js';
 
 export type Colors = "red" | "green" | "yellow" | "blue" | "magenta" | "cyan" | "white"
 
-type AgentConfig = {
+export type AgentConfig = {
+  name?: string
   role: string
   capabilities: string
   tools?: string[]
@@ -91,7 +92,10 @@ Return only the response without additional comments or explanations.`))
     const toolCalls: LlmChunkTool[] = []
     for await (const chunk of stream) {
       if (chunk.type == 'content') response += chunk.text
-      else if (chunk.type == 'tool') toolCalls.push(chunk)
+      else if (chunk.type == 'tool') {
+        console.log(`Called tool ${chunk.name}`)
+        toolCalls.push(chunk)
+      }
     }
 
     this.history.push(new Message('assistant', response))
@@ -101,6 +105,7 @@ Return only the response without additional comments or explanations.`))
 }
 
 export const createAgent = async (config: AgentConfig) => {
+  config.name = config.name || config.role
   const agent = new Agent(config)
   await agent.init()
   return agent

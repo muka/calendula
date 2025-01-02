@@ -33,7 +33,7 @@ export class LLM {
 
     registerMcpTools(tools: McpTool[], mcp: MCPClient) {
         tools.forEach(t => {
-            console.log(`LLM adding tool ${t.name}`)
+            // console.log(`LLM adding tool ${t.name}`)
             this.addPlugin(new McpToolPlugin(t, mcp))
         })
     }

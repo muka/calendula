@@ -22,6 +22,7 @@ export type ExecutionTracker = ExecutionTrackerItem[]
 
 export type CoordinatorAgentConfig = {
   agents: Agent[]
+  task?: string
   tools?: string[]
   color?: Colors
 }
@@ -56,9 +57,13 @@ export class AgentCoordinator {
     console.log(`${clc[color]( `coordinator${context? ' -> ' + context : ''}` )}\n ${message}\n\n`)
   }
 
-  async run(objective: string) {
+  async run(task?: string) {
 
-    const plan = await this.createPlan(objective)
+    task = task || this.config.task
+
+    if (!task) throw new Error(`Provide a task to run`)
+
+    const plan = await this.createPlan(task)
     const results: Message[] = []
 
     const tracker: ExecutionTracker = []

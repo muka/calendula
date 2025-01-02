@@ -12,7 +12,7 @@ global.EventSource = eventsource.EventSource
 export const createMCPClient = async (url?: string) => {
 
   url = url || config.mcpServerUrl
-  console.log(`mcp client connecting to ${url}`)
+  // console.log(`mcp client connecting to ${url}`)
 
   const transport = new SSEClientTransport(new URL(url));
 
@@ -37,7 +37,7 @@ export class MCPClient {
     async listTools() {
         const res = await this.client.listTools()
         const tools = res.tools || []
-        tools.forEach(t => console.log(`- ${t.name}: ${t.description} `))
+        // tools.forEach(t => console.log(`- ${t.name}: ${t.description} `))
         return tools
     }
 

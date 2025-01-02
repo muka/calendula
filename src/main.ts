@@ -1,58 +1,51 @@
-import YAML from 'js-yaml'
-import { createAgent } from './libs/agent.js';
 import * as fs from 'fs/promises';
-import { createCoordinator } from './libs/coordinator.js';
+import YAML from 'js-yaml';
+import { Agent, createAgent } from './libs/agent.js';
+import { listConfig, readConfig } from './libs/config-loader.js';
+import { CoordinatorAgentConfig, createCoordinator } from './libs/coordinator.js';
 
 export const main = async () => {
 
-  const architect = await createAgent({
-    role: 'software architect',
-    capabilities: 'defines the architecture and provide the implementation steps based on best practices',
-    color: 'green'
-  })
+  const files = await listConfig()
+  console.log(`Found ${files.length} configurations`)
 
-  const developer = await createAgent({
-    role: 'developer',
-    capabilities: 'write high-quality, documented and performant code',
-    color: 'red'
-  })
+  for await (const file of files) {
 
-  const evaluator = await createAgent({
-    role: 'evaluate',
-    capabilities: 'carefully evaluate code and report improvements',
-    color: 'magenta'
-  })
- 
-  const tester = await createAgent({
-    role: "tester",
-    capabilities: "develop tests based on code and evaluate the quality of response.",
-    color: 'yellow'
-  })
+    console.log(`Running ${file}`)
 
-  const devops = await createAgent({
-    role: "dev ops",
-    capabilities: "create the deployment infrastructure, providing the Dockerfile and docker compose with the required services",
-    color: 'yellow'
-  })
+    const config = await readConfig(file)
 
-  const executor = await createAgent({
-    role: "filesystem executor",
-    capabilities: "Interact with the filesystem to update the codebase with the agent generated contents.",
-    color: 'red',
-    // tools: ['read_file', 'write_file', 'create_directory', 'list_directory', 'search_files', 'get_file_info']
-  })
+    const agents: Agent[] = []
 
-  const coordinator = await createCoordinator({
-    agents: [
-      architect, developer, evaluator, tester, devops, executor
-    ],
-    color: 'blue',
-  })
+    for (const agentConfig of config.agents) {
+      agents.push(await createAgent(agentConfig))
+    }
 
-  const res = await coordinator.run('write a program to create a web-based todo list')
+    console.log(`Loaded ${agents.length} agents`)
 
-  await fs.mkdir('./tmp', { recursive: true })
-  await fs.writeFile(`./tmp/run-${Date.now()}.yaml`, YAML.dump(res))
+    for (const task of config.tasks) {
+
+      const coordinatorConfig: CoordinatorAgentConfig = {
+        ...task,
+        agents: []
+      }
+
+      for (const agentName of task.agents) {
+        const filtered = agents.filter(a => a.getConfig().name === agentName)
+        if (!filtered) throw new Error(`Agent ${agentName} not found.`)
+        coordinatorConfig.agents.push(filtered.at(0))
+      }
+   
+      const coordinator = await createCoordinator(coordinatorConfig)
+      console.log(`Starting task ${coordinatorConfig.task}`)
+      const res = await coordinator.run(coordinatorConfig.task)
+
+      await fs.mkdir('./tmp', { recursive: true })
+      await fs.writeFile(`./tmp/run-${Date.now()}.yaml`, YAML.dump(res))
+
+    }
+
+  }
 
 }
 
