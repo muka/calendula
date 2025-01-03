@@ -3,7 +3,8 @@ import { Message } from "multi-llm-ts";
 import { Agent, Colors } from "./agent.js";
 import { LLM } from "./llm.js";
 import { McpTool } from "./mcp/llm-plugin.js";
-import { MCPClient } from "./mcp/mcp-client.js";
+import { MCPClient, McpServer } from "./mcp/mcp-client.js";
+import { createLogger } from "./logger.js";
 
 export type PlanItem = {
   task: string,
@@ -24,11 +25,13 @@ export type CoordinatorAgentConfig = {
   agents: Agent[]
   task?: string
   tools?: string[]
+  mcpServers?: McpServer[]
   color?: Colors
 }
 
 export class AgentCoordinator {
 
+  private readonly logger = createLogger('agent-coordinator')
   private mcp: MCPClient
   private llm: LLM
 
@@ -44,7 +47,7 @@ export class AgentCoordinator {
 
   async init() {
     
-    this.mcp = new MCPClient()
+    this.mcp = new MCPClient(this.config.mcpServers)
     await this.mcp.init()
 
     await this.loadTools()
@@ -54,7 +57,7 @@ export class AgentCoordinator {
 
   log(message: string, context?: string) {
     const color = this.config.color || 'cyan'
-    console.log(`${clc[color]( `coordinator${context? ' -> ' + context : ''}` )}\n ${message}\n\n`)
+    this.logger.info(`${clc[color]( `coordinator${context? ' -> ' + context : ''}` )}\n ${message}\n\n`)
   }
 
   async run(task?: string) {

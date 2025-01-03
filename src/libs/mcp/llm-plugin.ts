@@ -1,5 +1,6 @@
 import { Plugin } from "multi-llm-ts"
 import { MCPClient } from "./mcp-client.js"
+import { createLogger } from "../logger.js"
 
 export type McpTool = {
     name: string
@@ -8,6 +9,8 @@ export type McpTool = {
 }
 
 export class McpToolPlugin extends Plugin {
+
+    private readonly logger = createLogger('mcp-tool-plugin')
 
     constructor(private readonly tool: McpTool, private readonly mcp: MCPClient) {
         super()
@@ -32,31 +35,7 @@ export class McpToolPlugin extends Plugin {
       getRunningDescription(): string {
         return `Running ${this.tool.name}`
       }
-    
-      // getParameters(): PluginParameter[] {
-        
-      //   const parameters: PluginParameter[] = []
-      //   const schema = this.tool.inputSchema
 
-      //   for (const name in schema.properties) {
-            
-      //       const props = schema.properties[name] as {description?: string, type: string, items?: any }
-      //       const required = ((schema.required || []) as string[]).indexOf(name) > -1
-
-      //       const parameter = {
-      //         name,
-      //         description: props.description,
-      //         type: props.type,
-      //         required,
-      //         items: props.items
-      //       }
-      //       parameters.push(parameter)
-
-      //   }
-
-      //   return parameters
-      // }
-    
       isCustomTool(): boolean {
         return true
       }
@@ -73,12 +52,11 @@ export class McpToolPlugin extends Plugin {
       }
        
       async execute(args: any): Promise<any> {
-        console.log('execute', this.tool.name, args)
+        this.logger.debug(`Execute tool ${this.tool.name} ${JSON.stringify(args)}`)
         const res = await this.mcp.callTool({
             name: this.tool.name,
             arguments: args
         })
-        // console.log('execute', res)
-        return res || ''
+        return res || {}
       }  
 }

@@ -1,14 +1,25 @@
 import { igniteEngine, LlmChunk, LlmCompletionOpts, LlmEngine, LlmResponse, Message, Plugin } from "multi-llm-ts";
 import { McpTool, McpToolPlugin } from "./mcp/llm-plugin.js";
 import { MCPClient } from "./mcp/mcp-client.js";
-import { config } from "./config.js";
 
+export type LLMConfig = {
+    provider: string
+    providerModel: string
+    providerConfig: { apiKey: string }
+}
 
 export class LLM {
     llm: LlmEngine
 
+    private readonly config: LLMConfig
+
     constructor() {
-        this.llm = igniteEngine(config.provider, config.providerConfig)
+        this.config = {
+            provider: process.env.LLM_PROVIDER || 'openai',
+            providerModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+            providerConfig: { apiKey: process.env.OPENAI_API_KEY },
+        }
+        this.llm = igniteEngine(this.config.provider, this.config.providerConfig)
     }
 
     async init() {
@@ -20,11 +31,11 @@ export class LLM {
     }
 
     complete(thread: Message[], opts?: LlmCompletionOpts): Promise<LlmResponse> {
-        return this.llm.complete(config.providerModel, thread, opts)
+        return this.llm.complete(this.config.providerModel, thread, opts)
     }
 
     generate(thread: Message[], opts?: LlmCompletionOpts): AsyncIterable<LlmChunk> {
-        return this.llm.generate(config.providerModel, thread, opts)
+        return this.llm.generate(this.config.providerModel, thread, opts)
     }
 
     addPlugin(plugin: Plugin) {
@@ -32,10 +43,7 @@ export class LLM {
     }
 
     registerMcpTools(tools: McpTool[], mcp: MCPClient) {
-        tools.forEach(t => {
-            // console.log(`LLM adding tool ${t.name}`)
-            this.addPlugin(new McpToolPlugin(t, mcp))
-        })
+        tools.forEach(t => this.addPlugin(new McpToolPlugin(t, mcp)))
     }
 
 }

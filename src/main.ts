@@ -1,65 +1,20 @@
-import * as fs from 'fs/promises';
-import YAML from 'js-yaml';
-import { Agent, createAgent } from './libs/agent.js';
-import { listConfig, readConfig } from './libs/config-loader.js';
-import { CoordinatorAgentConfig, createCoordinator } from './libs/coordinator.js';
+import 'dotenv/config'
+import { createAgent } from './libs/agent.js'
+import { TaskManger } from './libs/task-manger.js'
 
-export const runTasks = async () => {
+export const doTests = async () => {
 
-  const files = await listConfig()
-  console.log(`Found ${files.length} configurations`)
+  const agent = await createAgent({
+    role: 'manage files',
+    capabilities: 'handle files on the filesystem',
+  })
 
-  for await (const file of files) {
+  const res = await agent.run('Create a directory called test as working dir. Create a file helloworld.txt with no content. Add a new file hello2.txt with ciao in it. List all available files. ')
+  agent.log(res)
 
-    console.log(`Running ${file}`)
-
-    const config = await readConfig(file)
-
-    const agents: Agent[] = []
-
-    for (const agentConfig of config.agents) {
-      agents.push(await createAgent(agentConfig))
-    }
-
-    console.log(`Loaded ${agents.length} agents`)
-
-    for (const task of config.tasks) {
-
-      const coordinatorConfig: CoordinatorAgentConfig = {
-        ...task,
-        agents: []
-      }
-
-      for (const agentName of task.agents) {
-        const filtered = agents.filter(a => a.getConfig().name === agentName)
-        if (!filtered) throw new Error(`Agent ${agentName} not found.`)
-        coordinatorConfig.agents.push(filtered.at(0))
-      }
-   
-      const coordinator = await createCoordinator(coordinatorConfig)
-      console.log(`Starting task ${coordinatorConfig.task}`)
-      const res = await coordinator.run(coordinatorConfig.task)
-
-      await fs.mkdir('./tmp', { recursive: true })
-      await fs.writeFile(`./tmp/run-${Date.now()}.yaml`, YAML.dump(res))
-
-    }
-
-  }
 }
 
-// export const main = async () => {
-
-//   const agent = await createAgent({
-//     role: 'manage files',
-//     capabilities: 'handle files on the filesystem',
-//   })
-
-//   const res = await agent.run('Create a file helloworld.txt with no content. Add a new file hello2.txt with ciao in it. List all available files. ')
-//   agent.log(res)
-
-// }
-
-export const main = () => runTasks()
+// export const main = () => doTests()
+export const main = () => new TaskManger().runTasks()
 
 main().catch(e => console.error(e))

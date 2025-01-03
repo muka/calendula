@@ -3,7 +3,8 @@ import { LlmChunkTool, Message } from 'multi-llm-ts';
 import { v4 as uuid } from "uuid";
 import { LLM } from './llm.js';
 import { McpTool } from './mcp/llm-plugin.js';
-import { MCPClient } from './mcp/mcp-client.js';
+import { MCPClient, McpServer } from './mcp/mcp-client.js';
+import { createLogger } from "./logger.js";
 
 export type Colors = "red" | "green" | "yellow" | "blue" | "magenta" | "cyan" | "white"
 
@@ -12,11 +13,14 @@ export type AgentConfig = {
   role: string
   capabilities: string
   tools?: string[]
+  mcpServers?: McpServer[]
   color?: Colors
 }
 
 export class Agent {
   
+  private readonly logger = createLogger('agent')
+
   public readonly id: string
 
   private mcp: MCPClient
@@ -31,7 +35,7 @@ export class Agent {
 
   log(message: string, context?: string) {
     const color = this.config.color || 'cyan'
-    console.log(`${clc[color]( this.config.role + (context ? ' -> ' + context : '') )}\n ${message}\n\n`)
+    this.logger.info(`${clc[color]( this.config.role + (context ? ' -> ' + context : '') )}\n ${message}\n\n`)
   }
 
   getHistory() {
@@ -58,7 +62,7 @@ export class Agent {
 
   async init() {
     
-    this.mcp = new MCPClient()
+    this.mcp = new MCPClient(this.config.mcpServers)
     await this.mcp.init()
 
     await this.loadTools()
@@ -93,7 +97,7 @@ Return only the response without additional comments or explanations.`))
     for await (const chunk of stream) {
       if (chunk.type == 'content') response += chunk.text
       else if (chunk.type == 'tool') {
-        console.log(`Called tool ${chunk.name}`)
+        this.logger.debug(`Called tool ${chunk.name}`)
         toolCalls.push(chunk)
       }
     }

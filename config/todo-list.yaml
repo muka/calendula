@@ -1,6 +1,17 @@
 
+mcp:
+  - name: search
+    type: sse
+    url: http://web-search/sse
+  - name: fs
+    type: sse
+    url: http://filesystem/sse
+
+
 tasks: 
-  - task: write the code to create a web-based todo list. Use Svelte Kit for the frontend. Use Nest.js for the backend API. 
+  - task: 
+      write the code to create a web-based todo list. Use Svelte Kit for the frontend. Use Nest.js for the backend API. 
+      Ensure the filesystem is kept in sync during the execution of each step.
     agents: 
       - architect
       - developer
@@ -38,7 +49,9 @@ agents:
 
   - name: executor
     role: filesystem executor
-    capabilities: Interact with the filesystem to update the codebase with the agent generated contents.
+    capabilities: 
+      Handle interaction with the codebase on the filesystem. 
+      Check existing directory structure and format paths properly.
     color: red
     # tools: 
     #   - read_file
