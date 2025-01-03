@@ -1,0 +1,51 @@
+networks:
+  mcp:
+
+
+services:
+
+  arxiv:
+    build:
+      context: ./mcp
+      dockerfile: Dockerfile.arxiv-mcp-server
+    image: mcp-proxy/arxiv-mcp-server
+    networks:
+      - mcp
+
+  fetch:
+    build:
+      context: ./mcp
+      dockerfile: Dockerfile.fetch
+    image: mcp-proxy/fetch
+    networks:
+      - mcp
+
+  github:
+    build:
+      context: ./mcp
+      dockerfile: Dockerfile.github
+    image: mcp-proxy/github
+    networks:
+      - mcp
+    environment:
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}
+
+  web-search:
+    build:
+      context: ./mcp
+      dockerfile: Dockerfile.web-search-mcp
+    image: mcp-proxy/web-search
+    networks:
+      - mcp
+    environment:
+      - SERPER_API_KEY=${SERPER_API_KEY}
+
+  filesystem:
+    build:
+      context: ./mcp
+      dockerfile: Dockerfile.filesystem
+    image: mcp-proxy/filesystem
+    networks:
+      - mcp
+    volumes:
+      - ./data/fs:/data

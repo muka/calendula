@@ -3,16 +3,4 @@ FROM mcp-proxy/base
 RUN uv venv
 RUN uv pip install git+https://github.com/blazickjp/arxiv-mcp-server.git
 
-COPY <<EOF /opt/mcp-proxy-server/config.json
-{
-  "servers": [
-    {
-        "name": "arxiv-mcp-server",
-        "transport": {
-            "command": "uv",
-            "args": [ "run", "arxiv-mcp-server", "--storage-path", "/data" ]
-        }
-    }
-  ]
-}
-EOF
+ENV COMMAND="uv run arxiv-mcp-server --storage-path /data"

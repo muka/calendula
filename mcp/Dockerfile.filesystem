@@ -1,22 +1,7 @@
 FROM mcp-proxy/base
 
+WORKDIR /app
 RUN git clone https://github.com/modelcontextprotocol/servers
-RUN cd servers/src/filesystem && npm i
+RUN cd servers/src/filesystem && npm i && npm run build
 
-COPY <<EOF /opt/mcp-proxy-server/config.json
-{
-  "servers": [
-    {
-        "name": "filesystem",
-        "transport": {
-            "command": "npx",
-            "args": [ 
-              "-y",
-              "@modelcontextprotocol/server-filesystem",
-              "/data"
-             ]
-        }
-    }
-  ]
-}
-EOF
+ENV COMMAND="node /app/servers/src/filesystem/dist/index.js /data"

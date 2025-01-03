@@ -4,70 +4,14 @@ networks:
 
 services:
 
-  proxy:
+  runtime:
+    entrypoint: npm
+    command: run dev
     build:
       context: .
-      dockerfile: Dockerfile.mcp-proxy
-    image: mcp-proxy/base
+      dockerfile: Dockerfile
+    image: muka/agents-test
     networks:
       - mcp
     volumes:
-      - ./mcp/proxy.json:/opt/mcp-proxy-server/config.json
-    ports:
-      - 3006:3006
-    environment:
-      - KEEP_SERVER_OPEN=1
-
-  # arxiv:
-  #   build:
-  #     context: ./mcp
-  #     dockerfile: Dockerfile.arxiv-mcp-server
-  #   image: mcp-proxy/arxiv-mcp-server
-  #   networks:
-  #     - mcp
-  #   environment:
-  #     - KEEP_SERVER_OPEN=1
-
-  # fetch:
-  #   build:
-  #     context: ./mcp
-  #     dockerfile: Dockerfile.fetch
-  #   image: mcp-proxy/fetch
-  #   networks:
-  #     - mcp
-  #   environment:
-  #     - KEEP_SERVER_OPEN=1
-
-  web-search:
-    build:
-      context: ./mcp
-      dockerfile: Dockerfile.web-search-mcp
-    image: mcp-proxy/web-search
-    networks:
-      - mcp
-    environment:
-      - KEEP_SERVER_OPEN=1
-      - SERPER_API_KEY=${SERPER_API_KEY}
-
-  github:
-    build:
-      context: ./mcp
-      dockerfile: Dockerfile.github
-    image: mcp-proxy/github
-    networks:
-      - mcp
-    environment:
-      - KEEP_SERVER_OPEN=1
-      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}
-
-  filesystem:
-    build:
-      context: ./mcp
-      dockerfile: Dockerfile.filesystem
-    image: mcp-proxy/filesystem
-    networks:
-      - mcp
-    environment:
-      - KEEP_SERVER_OPEN=1
-    volumes:
-      - ./data/fs:/data
+      - ./:/app

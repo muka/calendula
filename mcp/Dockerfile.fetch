@@ -4,16 +4,4 @@ RUN uv venv
 RUN git clone https://github.com/modelcontextprotocol/servers
 RUN cd servers/src/fetch && uv pip install .
 
-COPY <<EOF /opt/mcp-proxy-server/config.json
-{
-  "servers": [
-    {
-        "name": "fetch-mcp-server",
-        "transport": {
-            "command": "uv",
-            "args": [ "run", "mcp-server-fetch" ]
-        }
-    }
-  ]
-}
-EOF
+ENV COMMAND="uv run mcp-server-fetch"

@@ -9,6 +9,30 @@ tasks:
     cmds:
       - docker stop qdrant1 || true
 
-  docker-build:
+  dev:
+    cmds:
+      - docker compose kill runtime || true
+      - docker compose rm -f runtime  || true
+      - docker compose up runtime
+
+  bash:
+    cmds:
+      - docker compose run --rm -it --entrypoint bash runtime
+
+  build-mcp-proxy:
+    cmds:     
+      - docker build ./mcp/mcp-proxy-base -f ./mcp/mcp-proxy-base/Dockerfile -t mcp-proxy/base
+
+  build-mcp:
+    cmds:     
+      - docker compose -f docker-compose.mcp.yaml build {{.CLI_ARGS}}
+
+  run-mcp:
+    cmds:
+      - docker compose -f docker-compose.mcp.yaml rm -f {{.CLI_ARGS}} || true
+      - docker compose -f docker-compose.mcp.yaml up -d {{.CLI_ARGS}}
+      - docker compose -f docker-compose.mcp.yaml logs -f {{.CLI_ARGS}}
+
+  build:
     cmds:
       - docker compose build
