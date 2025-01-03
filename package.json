@@ -56,7 +56,7 @@
     "fastmcp": "^1.5.9",
     "glob": "^11.0.0",
     "js-yaml": "^4.1.0",
-    "multi-llm-ts": "github:muka/multi-llm-ts",
+    "multi-llm-ts": "^2.7.0",
     "tslib": "~2.7",
     "uuid": "^11.0.3",
     "zod": "^3.24.1",

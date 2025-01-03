@@ -1,4 +1,4 @@
-import { Plugin, PluginParameter } from "multi-llm-ts"
+import { Plugin } from "multi-llm-ts"
 import { MCPClient } from "./mcp-client.js"
 
 export type McpTool = {
@@ -33,30 +33,44 @@ export class McpToolPlugin extends Plugin {
         return `Running ${this.tool.name}`
       }
     
-      getParameters(): PluginParameter[] {
+      // getParameters(): PluginParameter[] {
         
-        const parameters: PluginParameter[] = []
-        const schema = this.tool.inputSchema
+      //   const parameters: PluginParameter[] = []
+      //   const schema = this.tool.inputSchema
 
-        for (const name in schema.properties) {
+      //   for (const name in schema.properties) {
             
-            const props = schema.properties[name] as {description?: string, type: string, items?: any }
-            const required = ((schema.required || []) as string[]).indexOf(name) > -1
+      //       const props = schema.properties[name] as {description?: string, type: string, items?: any }
+      //       const required = ((schema.required || []) as string[]).indexOf(name) > -1
 
-            const parameter = {
-              name,
-              description: props.description,
-              type: props.type,
-              required,
-              items: props.items
-            }
-            parameters.push(parameter)
+      //       const parameter = {
+      //         name,
+      //         description: props.description,
+      //         type: props.type,
+      //         required,
+      //         items: props.items
+      //       }
+      //       parameters.push(parameter)
 
-        }
+      //   }
 
-        return parameters
-      }
+      //   return parameters
+      // }
     
+      isCustomTool(): boolean {
+        return true
+      }
+
+      async getTools(): Promise<any|any[]> {
+        return {
+          type: 'function',
+          function: {
+            name: this.tool.name,
+            description: this.tool.description,
+            parameters: this.tool.inputSchema,
+          },
+        }
+      }
        
       async execute(args: any): Promise<any> {
         console.log('execute', this.tool.name, args)

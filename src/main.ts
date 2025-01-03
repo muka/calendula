@@ -4,7 +4,7 @@ import { Agent, createAgent } from './libs/agent.js';
 import { listConfig, readConfig } from './libs/config-loader.js';
 import { CoordinatorAgentConfig, createCoordinator } from './libs/coordinator.js';
 
-export const main = async () => {
+export const runTasks = async () => {
 
   const files = await listConfig()
   console.log(`Found ${files.length} configurations`)
@@ -46,7 +46,20 @@ export const main = async () => {
     }
 
   }
-
 }
+
+// export const main = async () => {
+
+//   const agent = await createAgent({
+//     role: 'manage files',
+//     capabilities: 'handle files on the filesystem',
+//   })
+
+//   const res = await agent.run('Create a file helloworld.txt with no content. Add a new file hello2.txt with ciao in it. List all available files. ')
+//   agent.log(res)
+
+// }
+
+export const main = () => runTasks()
 
 main().catch(e => console.error(e))
