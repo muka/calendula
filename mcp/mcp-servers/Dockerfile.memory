@@ -1,0 +1,6 @@
+FROM mcp-proxy/servers-base
+
+RUN cd servers/src/memory && npm i && npm run build
+
+WORKDIR /app/servers/src/memory
+ENV COMMAND="node dist/index.js"

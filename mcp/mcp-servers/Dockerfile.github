@@ -1,7 +1,5 @@
-FROM mcp-proxy/base
+FROM mcp-proxy/servers-base
 
-WORKDIR /app
-RUN git clone https://github.com/modelcontextprotocol/servers
 RUN cd servers/src/github && npm i && npm run build
 
 WORKDIR /app/servers/src/github

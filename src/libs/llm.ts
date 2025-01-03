@@ -1,6 +1,8 @@
 import { igniteEngine, LlmChunk, LlmCompletionOpts, LlmEngine, LlmResponse, Message, Plugin } from "multi-llm-ts";
 import { McpTool, McpToolPlugin } from "./mcp/llm-plugin.js";
 import { MCPClient } from "./mcp/mcp-client.js";
+import { logger } from 'multi-llm-ts';
+import { createLogger } from "./logger.js";
 
 export type LLMConfig = {
     provider: string
@@ -11,6 +13,8 @@ export type LLMConfig = {
 export class LLM {
     llm: LlmEngine
 
+    private readonly logger = createLogger('llm')
+
     private readonly config: LLMConfig
 
     constructor() {
@@ -20,6 +24,11 @@ export class LLM {
             providerConfig: { apiKey: process.env.OPENAI_API_KEY },
         }
         this.llm = igniteEngine(this.config.provider, this.config.providerConfig)
+        
+        logger.set((...args: any[]) => {
+            this.logger.debug(args.join(' '))
+        });
+
     }
 
     async init() {

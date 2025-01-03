@@ -19,21 +19,27 @@ tasks:
     cmds:
       - docker compose run --rm -it --entrypoint bash runtime
 
-  build-mcp-proxy:
+  build:
+    cmds:
+      - docker compose build
+
+  mcp-build-proxy-base:
     cmds:     
       - docker build ./mcp/mcp-proxy-base -f ./mcp/mcp-proxy-base/Dockerfile -t mcp-proxy/base
 
-  build-mcp:
+  mcp-build-servers-base:
+    deps: [mcp-build-proxy-base]
+    cmds:     
+      - docker build ./mcp/mcp-servers -f ./mcp/mcp-servers/Dockerfile.base -t mcp-proxy/servers-base
+
+  mcp-build:
+    deps: [mcp-build-servers-base]
     cmds:     
       - docker compose -f docker-compose.mcp.yaml build {{.CLI_ARGS}}
 
-  run-mcp:
+  mcp-run:
     cmds:
       - docker compose -f docker-compose.mcp.yaml kill -f {{.CLI_ARGS}} || true
       - docker compose -f docker-compose.mcp.yaml rm -f {{.CLI_ARGS}} || true
       - docker compose -f docker-compose.mcp.yaml up -d {{.CLI_ARGS}}
       - docker compose -f docker-compose.mcp.yaml logs -f {{.CLI_ARGS}}
-
-  build:
-    cmds:
-      - docker compose build

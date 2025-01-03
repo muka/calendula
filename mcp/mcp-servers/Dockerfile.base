@@ -1,0 +1,4 @@
+FROM mcp-proxy/base
+
+WORKDIR /app
+RUN git clone https://github.com/modelcontextprotocol/servers

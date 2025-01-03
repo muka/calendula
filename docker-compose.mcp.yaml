@@ -12,24 +12,6 @@ services:
     networks:
       - mcp
 
-  fetch:
-    build:
-      context: ./mcp
-      dockerfile: Dockerfile.fetch
-    image: mcp-proxy/fetch
-    networks:
-      - mcp
-
-  github:
-    build:
-      context: ./mcp
-      dockerfile: Dockerfile.github
-    image: mcp-proxy/github
-    networks:
-      - mcp
-    environment:
-      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}
-
   web-search:
     build:
       context: ./mcp
@@ -40,12 +22,71 @@ services:
     environment:
       - SERPER_API_KEY=${SERPER_API_KEY}
 
+  # home-assistant:
+  #   build:
+  #     context: ./mcp
+  #     dockerfile: Dockerfile.home-assistant
+  #   image: mcp-proxy/home-assistant
+  #   networks:
+  #     - mcp
+  #   environment:
+  #     - HOME_ASSISTANT_WEB_SOCKET_URL=${HOME_ASSISTANT_WEB_SOCKET_URL}
+  #     - HOME_ASSISTANT_API_TOKEN=${HOME_ASSISTANT_API_TOKEN}
+
+  # wikimedia:
+  #   build:
+  #     context: ./mcp
+  #     dockerfile: Dockerfile.wikimedia
+  #   image: mcp-proxy/wikimedia
+  #   networks:
+  #     - mcp
+  #   environment:
+  #     - WME_USERNAME=${WME_USERNAME}
+  #     - WME_PASSWORD=${WME_PASSWORD}
+
+  fetch:
+    build:
+      context: ./mcp/mcp-servers
+      dockerfile: Dockerfile.fetch
+    image: mcp-proxy/fetch
+    networks:
+      - mcp
+
+  github:
+    build:
+      context: ./mcp/mcp-servers
+      dockerfile: Dockerfile.github
+    image: mcp-proxy/github
+    networks:
+      - mcp
+    environment:
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}
+
   filesystem:
     build:
-      context: ./mcp
+      context: ./mcp/mcp-servers
       dockerfile: Dockerfile.filesystem
     image: mcp-proxy/filesystem
     networks:
       - mcp
     volumes:
       - ./data/fs:/data
+
+  memory:
+    build:
+      context: ./mcp/mcp-servers
+      dockerfile: Dockerfile.memory
+    image: mcp-proxy/memory
+    networks:
+      - mcp
+    volumes:
+      - ./data/memory/memory.json:/app/servers/src/memory/dist/memory.json
+  # git:
+  #   build:
+  #     context: ./mcp/mcp-servers
+  #     dockerfile: Dockerfile.git
+  #   image: mcp-proxy/git
+  #   networks:
+  #     - mcp
+  #   volumes:
+  #     - ./data/git:/data/git

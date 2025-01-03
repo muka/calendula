@@ -1,0 +1,6 @@
+FROM mcp-proxy/base
+
+RUN uv venv
+RUN uv pip install git+https://github.com/allenporter/mcp-server-home-assistant.git
+
+ENV COMMAND="uv run mcp-server-home-assistant"

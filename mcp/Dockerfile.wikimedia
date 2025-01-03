@@ -1,0 +1,11 @@
+FROM mcp-proxy/base
+
+
+RUN curl -sSL https://install.python-poetry.org | python3 -
+WORKDIR /app
+RUN git clone https://gitlab.wikimedia.org/repos/future-audiences/wikimedia-enterprise-model-context-protocol.git
+
+WORKDIR /app/wikimedia-enterprise-model-context-protocol
+RUN poetry install > /dev/null 2>&1
+
+ENV COMMAND="poetry run python -m wikimedia_enterprise_mcp.server"

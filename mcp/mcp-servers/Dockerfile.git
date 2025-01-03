@@ -1,0 +1,6 @@
+FROM mcp-proxy/servers-base
+
+RUN uv venv
+RUN cd servers/src/git && uv pip install .
+
+ENV COMMAND="uv run mcp-server-git"
