@@ -29,6 +29,7 @@ tasks:
 
   run-mcp:
     cmds:
+      - docker compose -f docker-compose.mcp.yaml kill -f {{.CLI_ARGS}} || true
       - docker compose -f docker-compose.mcp.yaml rm -f {{.CLI_ARGS}} || true
       - docker compose -f docker-compose.mcp.yaml up -d {{.CLI_ARGS}}
       - docker compose -f docker-compose.mcp.yaml logs -f {{.CLI_ARGS}}

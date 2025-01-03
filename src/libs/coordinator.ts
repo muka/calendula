@@ -1,10 +1,10 @@
-import clc from "cli-color";
 import { Message } from "multi-llm-ts";
-import { Agent, Colors } from "./agent.js";
+import { Agent } from "./agent.js";
+import { colorize, Colors } from "./colors.js";
 import { LLM } from "./llm.js";
+import { createLogger } from "./logger.js";
 import { McpTool } from "./mcp/llm-plugin.js";
 import { MCPClient, McpServer } from "./mcp/mcp-client.js";
-import { createLogger } from "./logger.js";
 
 export type PlanItem = {
   task: string,
@@ -56,8 +56,7 @@ export class AgentCoordinator {
   }
 
   log(message: string, context?: string) {
-    const color = this.config.color || 'cyan'
-    this.logger.info(`${clc[color]( `coordinator${context? ' -> ' + context : ''}` )}\n ${message}\n\n`)
+    this.logger.info(`${colorize( `coordinator${context? ' -> ' + context : ''}`, this.config.color)}\n ${message}\n\n`)
   }
 
   async run(task?: string) {

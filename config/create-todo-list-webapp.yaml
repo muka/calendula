@@ -40,11 +40,11 @@ agents:
   - name: tester
     role: software tester
     capabilities: develop tests based on code and evaluate the quality of response.
-    color: yellow
+    color: orange
 
   - name: devops
     role: dev ops
-    capabilities: create the deployment infrastructure using docker. Creates the Dockerfile and the integrated docker compose for the required services
+    capabilities: create a docker based deployment. Creates the Dockerfile and the integrated docker compose for the required services
     color: yellow
 
   - name: executor

@@ -1,12 +1,11 @@
-import clc from "cli-color";
+
 import { LlmChunkTool, Message } from 'multi-llm-ts';
 import { v4 as uuid } from "uuid";
+import { colorize, Colors } from "./colors.js";
 import { LLM } from './llm.js';
+import { createLogger } from "./logger.js";
 import { McpTool } from './mcp/llm-plugin.js';
 import { MCPClient, McpServer } from './mcp/mcp-client.js';
-import { createLogger } from "./logger.js";
-
-export type Colors = "red" | "green" | "yellow" | "blue" | "magenta" | "cyan" | "white"
 
 export type AgentConfig = {
   name?: string
@@ -34,8 +33,7 @@ export class Agent {
   }
 
   log(message: string, context?: string) {
-    const color = this.config.color || 'cyan'
-    this.logger.info(`${clc[color]( this.config.role + (context ? ' -> ' + context : '') )}\n ${message}\n\n`)
+    this.logger.info(`${colorize( this.config.role + (context ? ' -> ' + context : ''), this.config.color )}\n ${message}\n\n`)
   }
 
   getHistory() {
