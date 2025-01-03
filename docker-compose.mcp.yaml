@@ -22,6 +22,16 @@ services:
     environment:
       - SERPER_API_KEY=${SERPER_API_KEY}
 
+  command:
+    build:
+      context: ./mcp
+      dockerfile: Dockerfile.mcp-server-command
+    image: mcp-proxy/command
+    networks:
+      - mcp
+    volumes:
+      - ./data/command:/data
+
   # home-assistant:
   #   build:
   #     context: ./mcp

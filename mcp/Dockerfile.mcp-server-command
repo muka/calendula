@@ -1,0 +1,7 @@
+FROM mcp-proxy/base
+
+RUN git clone https://github.com/g0t4/mcp-server-commands.git
+RUN cd mcp-server-commands && npm i && npm run build
+
+WORKDIR /data
+ENV COMMAND="node /app/mcp-server-commands/build/index.js --verbose"
