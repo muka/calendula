@@ -2,23 +2,9 @@
 import winston from 'winston'
 import { colorize } from './colors.js'
 
-export const createLogger = (context?: string, metadata?: Record<string, string>) => {
+export const createLogger = (label = "logger", metadata?: Record<string, string>) => {
 
     const defaultMeta = metadata ? { ...metadata } : {}
-
-    if (context) defaultMeta.context = context
-
-
-    const contextFormatter = winston.format((info) => {
-        const {message} = info;
-
-        if (info.context) {
-          info.message = `[${colorize(info.context.toString())}] ${message}`;
-          delete info.context;
-        }
-        
-        return info;
-    })();
 
     return winston.createLogger({
         level: process.env.LOG_LEVEL || 'info',
@@ -26,11 +12,10 @@ export const createLogger = (context?: string, metadata?: Record<string, string>
         defaultMeta,
         transports: [
             new winston.transports.Console({
-                
                 format: winston.format.combine(
-                    winston.format.colorize(),                    
-                    contextFormatter,
-                    winston.format.simple(),
+                    winston.format.printf(msg =>
+                        `${label ? '[' + colorize(label) + '] ' : '' }${winston.format.colorize().colorize(msg.level, msg.level)} ${msg.message}`
+                    )
                 ),
             })
         ]
