@@ -1,19 +1,23 @@
-# LLM agent test
+# Calendula LLM agents
 
 Experiments over agentic approaches with LLM. This is an educative project which selectively tries to avoid more structured frameworks.
 
 It uses MCP as repositories for tools, prompts and resources. 
 
-In `./config` there is a sample YAML to configure agents and tasks to perform to develop a TODO list web application. 
+In `./config` there is a sample YAML to configure agents and tasks to perform to develop a TODO list web application and a SOTA for REC in Europe. 
 
 ## Setup
+
+**Note:** This project uses [Task](https://taskfile.dev/) for automation, consider installing to ease the setup.
 
 1. Install dependencies with a package manger e.g. `npm i`
 2. Build the base image for the MCP proxy
 
 ```sh
 docker build ./mcp/mcp-proxy-base -f ./mcp/mcp-proxy-base/Dockerfile -t mcp-proxy/base
+docker build ./mcp/mcp-servers -f ./mcp/mcp-servers/Dockerfile.base -t mcp-proxy/servers-base
 ```
+
 3. Create a `.env` in the root folder and set the those api keys
 
 ```
