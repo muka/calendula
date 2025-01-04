@@ -71,10 +71,10 @@ export class TaskManger {
     
           const coordinator = await createCoordinator(coordinatorConfig)
           this.logger.info(`Starting task ${coordinatorConfig.task}`)
-          const res = await coordinator.run(coordinatorConfig.task)
+          const tracker = await coordinator.run(coordinatorConfig.task)
     
-          await fs.mkdir(`./tmp/${basename}`, { recursive: true })
-          await fs.writeFile(`./tmp/${basename}/${new Date().toISOString()}.yaml`, YAML.dump(res))
+          await fs.mkdir(`./logs/${basename}`, { recursive: true })
+          await fs.writeFile(`./logs/${basename}/${tracker.ts.toISOString()}.yaml`, YAML.dump(tracker))
 
         }
     

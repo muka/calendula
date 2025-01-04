@@ -5,6 +5,7 @@ import { LLM } from "./llm.js";
 import { createLogger } from "./logger.js";
 import { McpTool } from "./mcp/llm-plugin.js";
 import { MCPClient, McpServer } from "./mcp/mcp-client.js";
+import { v4 as uuid } from "uuid";
 
 export type PlanItem = {
   task: string,
@@ -17,7 +18,11 @@ export type ExecutionTrackerItem = PlanItem & {
   ts: Date
 }
 
-export type ExecutionTracker = ExecutionTrackerItem[]
+export type ExecutionTracker = {
+  id: string
+  ts: Date
+  items: ExecutionTrackerItem[]
+}
 
 export type CoordinatorAgentConfig = {
   agents: Agent[]
@@ -59,6 +64,8 @@ export class AgentCoordinator {
 
   async run(task?: string) {
 
+    const id = uuid()
+
     task = task || this.config.task
 
     if (!task) throw new Error(`Provide a task to run`)
@@ -66,7 +73,11 @@ export class AgentCoordinator {
     const plan = await this.createPlan(task)
     const history: Message[] = []
 
-    const tracker: ExecutionTracker = []
+    const tracker: ExecutionTracker = {
+      id,
+      ts: new Date(),
+      items: []
+    }
 
     for (const step of plan) {
       
@@ -85,7 +96,7 @@ export class AgentCoordinator {
 
       agent.log(result, 'task result')
 
-      tracker.push({
+      tracker.items.push({
         ...step,
         result,
         ts: new Date()
