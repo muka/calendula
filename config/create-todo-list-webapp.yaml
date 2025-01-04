@@ -6,12 +6,23 @@ mcp:
   - name: fs
     type: sse
     url: http://filesystem/sse
-
+  - name: git
+    type: sse
+    url: http://git/sse
+  - name: arxiv
+    type: sse
+    url: http://arxiv/sse
+  - name: fetch
+    type: sse
+    url: http://fetch/sse
+  - name: mem
+    type: sse
+    url: http://memory/sse
 
 tasks: 
   - task: 
       write the code to create a web-based todo list. Use Svelte Kit for the frontend. Use Nest.js for the backend API. 
-      Ensure the filesystem is kept in sync during the execution of each step.
+      Ensure the filesystem is kept in sync during the execution of each step. Create and mantain a git repository while applying edits.
     agents: 
       - architect
       - developer

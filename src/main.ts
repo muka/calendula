@@ -15,6 +15,16 @@ export const doTests = async () => {
 }
 
 // export const main = () => doTests()
-export const main = () => new TaskManger().runTasks()
+export const main = async () => {
+
+  console.log(process.argv[2])
+
+  let filename: string|undefined
+  if (process.argv.length > 2 && process.argv[2]) {
+    filename = process.argv[2]
+  }
+
+  await new TaskManger().run(filename)
+}
 
 main().catch(e => console.error(e))

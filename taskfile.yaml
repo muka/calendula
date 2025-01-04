@@ -13,7 +13,7 @@ tasks:
     cmds:
       - docker compose kill runtime || true
       - docker compose rm -f runtime  || true
-      - docker compose up runtime
+      - docker compose run --rm -it runtime run dev {{.CLI_ARGS}}
 
   bash:
     cmds:

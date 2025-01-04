@@ -13,5 +13,7 @@ services:
     image: muka/agents-test
     networks:
       - mcp
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL}
     volumes:
       - ./:/app

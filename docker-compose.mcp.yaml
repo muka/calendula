@@ -30,7 +30,7 @@ services:
     networks:
       - mcp
     volumes:
-      - ./data/command:/data
+      - ./data/workbench:/data
 
   # home-assistant:
   #   build:
@@ -62,15 +62,15 @@ services:
     networks:
       - mcp
 
-  github:
-    build:
-      context: ./mcp/mcp-servers
-      dockerfile: Dockerfile.github
-    image: mcp-proxy/github
-    networks:
-      - mcp
-    environment:
-      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}
+  # github:
+  #   build:
+  #     context: ./mcp/mcp-servers
+  #     dockerfile: Dockerfile.github
+  #   image: mcp-proxy/github
+  #   networks:
+  #     - mcp
+  #   environment:
+  #     - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}
 
   filesystem:
     build:
@@ -80,7 +80,7 @@ services:
     networks:
       - mcp
     volumes:
-      - ./data/fs:/data
+      - ./data/workbench:/data
 
   memory:
     build:
@@ -89,14 +89,15 @@ services:
     image: mcp-proxy/memory
     networks:
       - mcp
+      # volumes:
+      # - ./data/memory/memory.json:/app/servers/src/memory/dist/memory.json
+
+  git:
+    build:
+      context: ./mcp/mcp-servers
+      dockerfile: Dockerfile.git
+    image: mcp-proxy/git
+    networks:
+      - mcp
     volumes:
-      - ./data/memory/memory.json:/app/servers/src/memory/dist/memory.json
-  # git:
-  #   build:
-  #     context: ./mcp/mcp-servers
-  #     dockerfile: Dockerfile.git
-  #   image: mcp-proxy/git
-  #   networks:
-  #     - mcp
-  #   volumes:
-  #     - ./data/git:/data/git
+      - ./data/git:/data/git

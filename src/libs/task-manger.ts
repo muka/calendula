@@ -24,14 +24,22 @@ export class TaskManger {
 
     constructor() { }
 
-    async runTasks() {
+    async run(taskset?: string) {
 
       const files = await this.listConfig()
       this.logger.info(`Found ${files.length} configurations`)
     
+      if (taskset) {
+        this.logger.info(`Running file ${taskset}`)
+      }
+
       for await (const file of files) {
-    
-        this.logger.info(`Running ${path.basename(file).replace(path.extname(file), '')} tasks`)
+        
+        const basename = path.basename(file).replace(path.extname(file), '')
+
+        if (taskset && basename !== taskset) continue
+
+        this.logger.info(`Running ${basename} taskset`)
     
         const config = await this.readConfig(file)
     
@@ -65,8 +73,8 @@ export class TaskManger {
           this.logger.info(`Starting task ${coordinatorConfig.task}`)
           const res = await coordinator.run(coordinatorConfig.task)
     
-          await fs.mkdir('./tmp', { recursive: true })
-          await fs.writeFile(`./tmp/run-${Date.now()}.yaml`, YAML.dump(res))
+          await fs.mkdir(`./tmp/${basename}`, { recursive: true })
+          await fs.writeFile(`./tmp/${basename}/${new Date().toISOString()}.yaml`, YAML.dump(res))
 
         }
     

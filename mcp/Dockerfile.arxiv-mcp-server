@@ -1,6 +1,8 @@
 FROM mcp-proxy/base
 
+RUN git clone https://github.com/blazickjp/arxiv-mcp-server.git
+WORKDIR /app/arxiv-mcp-server
 RUN uv venv
-RUN uv pip install git+https://github.com/blazickjp/arxiv-mcp-server.git
+RUN uv pip install . && uv build
 
 ENV COMMAND="uv run arxiv-mcp-server --storage-path /data"

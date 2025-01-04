@@ -12,9 +12,7 @@ export type PlanItem = {
 }
 export type Plan = PlanItem[]
 
-export type ExecutionTrackerItem = {
-  step: PlanItem
-  messages: Message[]  
+export type ExecutionTrackerItem = PlanItem & {
   result: string
   ts: Date
 }
@@ -66,7 +64,7 @@ export class AgentCoordinator {
     if (!task) throw new Error(`Provide a task to run`)
 
     const plan = await this.createPlan(task)
-    const results: Message[] = []
+    const history: Message[] = []
 
     const tracker: ExecutionTracker = []
 
@@ -74,31 +72,31 @@ export class AgentCoordinator {
       
       const filter = this.config.agents.filter(a => a.getConfig().role === step.role)
       if (!filter.length) {
-        throw new Error(`Agent ${step.role} not found`)
+        throw new Error(`Agent with role '${step.role}' not found`)
       }
-
-      const agent = filter[0]
+      const agent = filter.at(0)
 
       this.log(step.task, step.role)
 
       const result = await agent.run([
-        ...results,
+        ...history,
         new Message('user', step.task)
       ])
 
       agent.log(result, 'task result')
 
       tracker.push({
-        messages: results,
-        step,
+        ...step,
         result,
         ts: new Date()
       })
 
-      results.push(new Message('user', step.task))
-      results.push(new Message('assistant', result))
+      history.push(new Message('user', step.task))
+      history.push(new Message('assistant', result))
 
     }
+
+    this.log(`Task completed`)
 
     return tracker
   }
@@ -126,7 +124,7 @@ Avoid explanations and notes.
 Return only the list as JSON without backtick following this format
 [{
   "task": "description of the activity",
-  "role": "role of the assigned agent"
+  "role": "unmodified role of the assigned agent"
 }]
 `))
 

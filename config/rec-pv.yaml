@@ -1,0 +1,54 @@
+
+mcp:
+  - name: search
+    type: sse
+    url: http://web-search/sse
+  - name: fs
+    type: sse
+    url: http://filesystem/sse
+  - name: arxiv
+    type: sse
+    url: http://arxiv/sse
+  - name: fetch
+    type: sse
+    url: http://fetch/sse
+  - name: mem
+    type: sse
+    url: http://memory/sse
+
+tasks: 
+  - task: 
+      Create a chomprensive state of the art on the usage and best practices to increase the availability and productivity of PV systems in cooperative Renewable Energy Communities (REC) in Europe.
+      Collect relevant and recent scientific papers (from 2020 upward) and European Commission strategies and policies toward the diffiusion of PV system in REC.
+      Refer to this link for details https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-CL5-2024-D3-02-06
+      Create a complete report of all the findings.
+    agents: 
+    - researcher
+    - energy-manger
+    - bizdev
+    - reporter
+    color: blue
+
+agents:
+  - name: researcher
+    role: renewable energy researcher
+    capabilities: search for papers and scientific publications in the field of renewable energy, specifically PV systems.
+    color: green
+
+  - name: energy-manger
+    role: energy manager in Renewable Energy Communities
+    capabilities: search for best practice in the fundarising and installation of new PV systems. Explore strategies to expand the user based and participation of local community members
+    color: red
+
+  - name: bizdev
+    role: business developer
+    capabilities: 
+      Focus on developing sustainable business based on renewable energy such as PV systems. Define strategies to grow the impact and outreach of Renewable energy communities (REC)
+    color: cyan
+
+  - name: reporter
+    role: create reports
+    capabilities: 
+      create a complete report of the findings. Save it in markdown format.
+    color: magenta
+
