@@ -19,9 +19,9 @@ mcp:
 tasks: 
   - task: 
       Create a chomprensive state of the art on the usage and best practices to increase the availability and productivity of PV systems in cooperative Renewable Energy Communities (REC) in Europe.
+      Focus primarly on European initiatives.
       Collect relevant and recent scientific papers (from 2020 upward) and European Commission strategies and policies toward the diffiusion of PV system in REC.
-      Refer to this link for details https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/HORIZON-CL5-2024-D3-02-06
-      Create a complete report of all the findings.
+      Create a detailed report of all your findings, ensure to include all the references.
     agents: 
     - researcher
     - energy-manger
