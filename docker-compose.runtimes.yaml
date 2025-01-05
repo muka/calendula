@@ -1,0 +1,52 @@
+networks:
+  mcp:
+
+
+services:
+
+  mlc:
+    build:
+      context: ./runtimes/mlc
+      dockerfile: Dockerfile
+    image: calendula/runtimes-mlc
+    networks:
+      - mcp
+    volumes:
+      - ./data/runtimes/mlc:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 0
+              capabilities: [ gpu ]
+
+  vllm:
+    image: vllm/vllm-openai:latest
+    # restart: always
+    shm_size: '64gb'
+    ports:
+      - 5000:5000
+    volumes:
+      - ./data/runtimes/vllm/huggingface:/root/.cache/huggingface
+    networks:
+      - mcp
+    entrypoint: python3
+    command: -m vllm.entrypoints.openai.api_server --port=5000 --host=0.0.0.0 --model microsoft/Phi-3-vision-128k-instruct --trust-remote-code --max-num-seqs=5 --max-model-len 4096
+    # command: -m vllm.entrypoints.openai.api_server --port=5000 --host=0.0.0.0 --model meta-llama/Llama-3.1-8B
+    environment:
+      - CUDA_LAUNCH_BLOCKING=1
+      # - NCCL_IGNORE_DISABLED_P2P=1
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:5000/v1/models" ]
+      interval: 30s
+      timeout: 5s
+      retries: 20
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]

@@ -43,3 +43,19 @@ tasks:
       - docker compose -f docker-compose.mcp.yaml rm -f {{.CLI_ARGS}} || true
       - docker compose -f docker-compose.mcp.yaml up -d {{.CLI_ARGS}}
       - docker compose -f docker-compose.mcp.yaml logs -f {{.CLI_ARGS}}
+
+  runtimes-mlc-build:
+    cmds:
+      - docker compose -f docker-compose.runtimes.yaml build mlc
+
+  runtimes-mlc-start:
+    cmds:
+      - docker compose -f docker-compose.runtimes.yaml down
+      - docker compose -f docker-compose.runtimes.yaml up -d mlc
+      - docker compose -f docker-compose.runtimes.yaml logs -f mlc
+
+  runtimes-vllm-start:
+    cmds:
+      - docker compose -f docker-compose.runtimes.yaml down
+      - docker compose -f docker-compose.runtimes.yaml up -d vllm
+      - docker compose -f docker-compose.runtimes.yaml logs -f vllm

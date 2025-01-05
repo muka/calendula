@@ -1,13 +1,12 @@
-import { igniteEngine, LlmChunk, LlmCompletionOpts, LlmEngine, LlmResponse, Message, Plugin } from "multi-llm-ts";
+import { igniteEngine, LlmChunk, LlmCompletionOpts, LlmEngine, LlmResponse, logger, Message, Plugin } from "multi-llm-ts";
+import { createLogger } from "./logger.js";
 import { McpTool, McpToolPlugin } from "./mcp/llm-plugin.js";
 import { MCPClient } from "./mcp/mcp-client.js";
-import { logger } from 'multi-llm-ts';
-import { createLogger } from "./logger.js";
 
 export type LLMConfig = {
     provider: string
     providerModel: string
-    providerConfig: { apiKey: string }
+    providerConfig: { apiKey: string, baseURL: string }
 }
 
 export class LLM {
@@ -21,7 +20,10 @@ export class LLM {
         this.config = {
             provider: process.env.LLM_PROVIDER || 'openai',
             providerModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-            providerConfig: { apiKey: process.env.OPENAI_API_KEY },
+            providerConfig: { 
+                apiKey: process.env.OPENAI_API_KEY,
+                baseURL: process.env.OPENAI_BASEURL || undefined,
+            },
         }
         this.llm = igniteEngine(this.config.provider, this.config.providerConfig)
         

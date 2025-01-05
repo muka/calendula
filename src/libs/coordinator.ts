@@ -119,24 +119,25 @@ export class AgentCoordinator {
     messages.push(new Message('system', `
 You are a software program coordinating autonomous agents capable of performing tasks to reach an objective. 
 Your task is to provide precise indications to the agents based on their capabilities and monitor the progresses in subsequent tasks.
-The objective is: ${objective}
 `))
 
 messages.push(new Message('user', `
-Define a plan as a list of activities to reach the objective
+Create a plan of activities to reach the following objective: 
+${objective}
 
-The agent available are:
+You can assign activities only to the following agents:
 ${JSON.stringify(this.config.agents.map(a => ({
   role: a.getConfig().role,
   capabilities: a.getConfig().capabilities,
 })))}
 
 Avoid explanations and notes.
-Return only the list as JSON without backtick following this format
+Return only the list as JSON without backtick following this format:
 [{
   "task": "description of the activity",
-  "role": "unmodified role of the assigned agent"
+  "role": "agent role field, without modification"
 }]
+
 `))
 
     const plannerRes = await this.llm.complete(messages)
