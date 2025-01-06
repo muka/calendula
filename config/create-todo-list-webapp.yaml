@@ -31,6 +31,8 @@ tasks:
       - devops
       - executor
     color: blue
+    llmConfig:
+      model: smallthinker
 
 agents:
   - name: architect

@@ -9,6 +9,12 @@ tasks:
     cmds:
       - docker stop qdrant1 || true
 
+  stop:
+    cmds:
+      - task: mcp-stop
+      - task: runtimes-stop
+      - docker compose down
+
   dev:
     cmds:
       - docker compose kill runtime || true
@@ -38,24 +44,51 @@ tasks:
       - docker compose -f docker-compose.mcp.yaml build {{.CLI_ARGS}}
 
   mcp-run:
+    deps: [mcp-stop]
+    cmds:
+      - docker compose -f docker-compose.mcp.yaml up -d {{.CLI_ARGS}}
+      - docker compose -f docker-compose.mcp.yaml logs -f {{.CLI_ARGS}}
+
+  mcp-stop:
     cmds:
       - docker compose -f docker-compose.mcp.yaml kill {{.CLI_ARGS}} || true
       - docker compose -f docker-compose.mcp.yaml rm -f {{.CLI_ARGS}} || true
-      - docker compose -f docker-compose.mcp.yaml up -d {{.CLI_ARGS}}
-      - docker compose -f docker-compose.mcp.yaml logs -f {{.CLI_ARGS}}
 
   runtimes-mlc-build:
     cmds:
       - docker compose -f docker-compose.runtimes.yaml build mlc
 
-  runtimes-mlc-start:
+  runtimes-stop:
     cmds:
       - docker compose -f docker-compose.runtimes.yaml down
+
+  runtimes-start-mlc:
+    deps: [ runtimes-stop ]
+    cmds:
       - docker compose -f docker-compose.runtimes.yaml up -d mlc
       - docker compose -f docker-compose.runtimes.yaml logs -f mlc
 
-  runtimes-vllm-start:
+  runtimes-start-vllm:
+    deps: [ runtimes-stop ]
     cmds:
-      - docker compose -f docker-compose.runtimes.yaml down
       - docker compose -f docker-compose.runtimes.yaml up -d vllm
       - docker compose -f docker-compose.runtimes.yaml logs -f vllm
+
+  runtimes-start-ollama:
+    deps: [ runtimes-stop ]
+    cmds:
+      - docker compose -f docker-compose.runtimes.yaml up -d ollama
+      - docker compose -f docker-compose.runtimes.yaml logs -f ollama
+
+  runtimes-ollama-pull-images:
+    cmds:
+      - task runtimes-ollama-pull-image -- hermes3
+      - task runtimes-ollama-pull-image -- smallthinker
+      - task runtimes-ollama-pull-image -- llama3.2
+      - task runtimes-ollama-pull-image -- llama3.1:8b
+      - task runtimes-ollama-pull-image -- mistral:8b
+
+  runtimes-ollama-pull-image:
+    cmds:
+      - docker compose -f docker-compose.runtimes.yaml exec ollama ollama pull {{.CLI_ARGS}}
+  

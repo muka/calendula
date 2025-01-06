@@ -6,6 +6,7 @@ import { MCPClient } from "./mcp/mcp-client.js";
 export type LLMConfig = {
     provider: string
     providerModel: string
+    providerBaseURL?: string
     providerConfig: { apiKey: string, baseURL: string }
 }
 
@@ -14,17 +15,30 @@ export class LLM {
 
     private readonly logger = createLogger('llm')
 
-    private readonly config: LLMConfig
+    constructor(private config?: LLMConfig) {
 
-    constructor() {
-        this.config = {
-            provider: process.env.LLM_PROVIDER || 'openai',
-            providerModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-            providerConfig: { 
-                apiKey: process.env.OPENAI_API_KEY,
-                baseURL: process.env.OPENAI_BASEURL || undefined,
-            },
+        this.config = this.config || {} as LLMConfig
+
+        this.config.provider = this.config.provider || process.env.PROVIDER || 'openai'
+        this.config.providerModel = this.config.providerModel || process.env.PROVIDER_MODEL || 'gpt-4o-mini'
+
+        this.config.providerConfig = this.config.providerConfig || {
+            apiKey: process.env.PROVIDER_API_KEY,
+            baseURL: process.env.PROVIDER_BASEURL || undefined,
         }
+
+        if (this.config.providerBaseURL) {
+            this.config.providerConfig.baseURL = this.config.providerBaseURL
+        }
+
+        this.logger.debug(`LLM config ${JSON.stringify({
+            ...this.config,
+            providerConfig: {
+                ...this.config.providerConfig,
+                apiKey: this.config.providerConfig.apiKey ? '***' : undefined
+            },
+        }, null, 2)}`)
+
         this.llm = igniteEngine(this.config.provider, this.config.providerConfig)
         
         logger.set((...args: any[]) => {
@@ -39,6 +53,28 @@ export class LLM {
     async destroy() {
         this.llm.clearPlugins()
         this.llm = undefined
+    }
+
+    parseJSON(raw: string) {
+
+        if (raw.startsWith('```json')) {
+            raw = raw.replace('```json', '')
+        }
+        if (raw.startsWith('```')) {
+            raw = raw.replace('```', '')
+        }
+        if (raw.endsWith('```')) {
+            raw = raw.substring(0, raw.length-3)
+        }
+
+        try {
+            return JSON.parse(raw)
+        } catch(e) {
+            this.logger.warn(`Failed to parse JSON response: ${e.message}`)
+            this.logger.debug(`RAW: ${raw}`)
+        }
+
+        return null
     }
 
     complete(thread: Message[], opts?: LlmCompletionOpts): Promise<LlmResponse> {
@@ -58,3 +94,4 @@ export class LLM {
     }
 
 }
+

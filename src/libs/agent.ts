@@ -2,7 +2,7 @@
 import { LlmChunkTool, Message } from 'multi-llm-ts';
 import { v4 as uuid } from "uuid";
 import { colorize, Colors } from "./colors.js";
-import { LLM } from './llm.js';
+import { LLM, LLMConfig } from './llm.js';
 import { createLogger } from "./logger.js";
 import { McpTool } from './mcp/llm-plugin.js';
 import { MCPClient, McpServer } from './mcp/mcp-client.js';
@@ -14,6 +14,7 @@ export type AgentConfig = {
   tools?: string[]
   mcpServers?: McpServer[]
   color?: Colors
+  llmConfig?: LLMConfig
 }
 
 export class Agent {

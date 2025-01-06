@@ -1,7 +1,7 @@
 import { Message } from "multi-llm-ts";
 import { Agent } from "./agent.js";
 import { colorize, Colors } from "./colors.js";
-import { LLM } from "./llm.js";
+import { LLM, LLMConfig } from "./llm.js";
 import { createLogger } from "./logger.js";
 import { McpTool } from "./mcp/llm-plugin.js";
 import { MCPClient, McpServer } from "./mcp/mcp-client.js";
@@ -30,6 +30,7 @@ export type CoordinatorAgentConfig = {
   tools?: string[]
   mcpServers?: McpServer[]
   color?: Colors
+  llmConfig?: LLMConfig
 }
 
 export class AgentCoordinator {
@@ -39,7 +40,7 @@ export class AgentCoordinator {
   private llm: LLM
 
   constructor(private readonly config: CoordinatorAgentConfig) {
-    this.llm = new LLM()
+    this.llm = new LLM(this.config.llmConfig)
   }
 
 
@@ -117,7 +118,7 @@ export class AgentCoordinator {
     const messages: Message[] = []
 
     messages.push(new Message('system', `
-You are a software program coordinating autonomous agents capable of performing tasks to reach an objective. 
+You are a software program coordinating expert agents capable of performing tasks to reach an objective. 
 Your task is to provide precise indications to the agents based on their capabilities and monitor the progresses in subsequent tasks.
 `))
 
@@ -131,20 +132,23 @@ ${JSON.stringify(this.config.agents.map(a => ({
   capabilities: a.getConfig().capabilities,
 })))}
 
-Avoid explanations and notes.
-Return only the list as JSON without backtick following this format:
+Answer only with the work plan as a list of activities. Avoid reasoning, explanations and notes in your answer.
+Return only the workplan as correct JSON without backtick following this format:
 [{
   "task": "description of the activity",
   "role": "agent role field, without modification"
-}]
-
-`))
+}]`))
 
     const plannerRes = await this.llm.complete(messages)
 
     this.log(plannerRes.content, 'plan')
 
-    const plan = JSON.parse(plannerRes.content)
+    const plan = this.llm.parseJSON(plannerRes.content)
+
+    if (!plan) {
+      throw new Error(`Failed to create plan.`)
+    }
+
     return plan
   }
 

@@ -11,6 +11,8 @@ services:
     image: mcp-proxy/arxiv-mcp-server
     networks:
       - mcp
+    volumes:
+      - ./data/arxiv:/data
 
   web-search:
     build:

@@ -4,6 +4,22 @@ networks:
 
 services:
 
+  ollama:
+    image: ollama/ollama
+    networks:
+      - mcp
+    ports:
+      - 11434:11434
+    volumes:
+      - ./data/runtimes/ollama:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 0
+              capabilities: [ gpu ]
+
   mlc:
     build:
       context: ./runtimes/mlc
@@ -32,7 +48,7 @@ services:
     networks:
       - mcp
     entrypoint: python3
-    command: -m vllm.entrypoints.openai.api_server --port=5000 --host=0.0.0.0 --model microsoft/Phi-3-vision-128k-instruct --trust-remote-code --max-num-seqs=5 --max-model-len 4096
+    command: -m vllm.entrypoints.openai.api_server --port=5000 --host=0.0.0.0 --model microsoft/Phi-3-vision-128k-instruct --trust-remote-code --max-num-seqs=5 --max-model-len 4096 --disable-frontend-multiprocessing
     # command: -m vllm.entrypoints.openai.api_server --port=5000 --host=0.0.0.0 --model meta-llama/Llama-3.1-8B
     environment:
       - CUDA_LAUNCH_BLOCKING=1
