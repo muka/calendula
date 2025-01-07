@@ -25,6 +25,6 @@
   },
   "include": [
     "src",
-    "__tests__"
+    "vitest.config.ts"
   ]
 }
