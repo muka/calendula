@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { TaskManger } from './task-manger.js';
 
 import { Message } from 'multi-llm-ts';
@@ -6,9 +6,16 @@ import { beforeEach } from 'node:test';
 import * as agent from './agent.js';
 import * as coordinator from './coordinator.js';
 
+import * as os from 'os'
+
 const configDir = './test/config';
 
 describe('task manager', () => {
+  
+  beforeAll(() => {
+    process.env['PROVIDER_API_KEY'] = '***'
+  })
+
   beforeEach(() => {
     vi.spyOn(agent, 'createAgent');
     vi.mock('./agent.js', async (importOriginal) => {
@@ -86,6 +93,7 @@ describe('task manager', () => {
   it('run', async () => {
     const taskManger = new TaskManger({
       tasksPath: './test/config',
+      logsPath: os.tmpdir(),
     });
     const result = await taskManger.run('test1');
     expect(result).not.toBeFalsy();
