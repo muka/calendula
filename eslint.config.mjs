@@ -17,7 +17,9 @@ export default tseslint.config(
     extends: [...tseslint.configs.recommended],
 
     files: ['**/*.ts', '**/*.mts'],
-
+    ignores: [
+      './vitest.confi.ts'
+    ],
     plugins: {
       '@typescript-eslint': tseslint.plugin,
     },
@@ -42,7 +44,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['__tests__/**'],
+    files: ['./src/**/*.test.ts'],
 
     plugins: {
       vitest,

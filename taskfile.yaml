@@ -21,6 +21,12 @@ tasks:
       - docker compose rm -f runtime  || true
       - docker compose run --rm -it runtime run dev {{.CLI_ARGS}}
 
+  test:
+    cmds:
+      - docker compose kill runtime || true
+      - docker compose rm -f runtime  || true
+      - docker compose run --rm -it runtime run test:watch {{.CLI_ARGS}}
+
   bash:
     cmds:
       - docker compose run --rm -it --entrypoint bash runtime
@@ -43,7 +49,7 @@ tasks:
     cmds:     
       - docker compose -f docker-compose.mcp.yaml build {{.CLI_ARGS}}
 
-  mcp-run:
+  mcp-start:
     deps: [mcp-stop]
     cmds:
       - docker compose -f docker-compose.mcp.yaml up -d {{.CLI_ARGS}}

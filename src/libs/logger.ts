@@ -1,13 +1,14 @@
 
 import winston from 'winston'
 import { colorize } from './colors.js'
+import { getConfig } from './config.js'
 
 export const createLogger = (label = "logger", metadata?: Record<string, string>) => {
 
     const defaultMeta = metadata ? { ...metadata } : {}
 
     return winston.createLogger({
-        level: process.env.LOG_LEVEL || 'info',
+        level: getConfig('LOG_LEVEL'),
         format: winston.format.json(),
         defaultMeta,
         transports: [

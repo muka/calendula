@@ -1,0 +1,23 @@
+
+mcp:
+  - name: search
+    type: sse
+    url: http://web-search/sse
+
+tasks: 
+  - task: 
+      Say hello world
+    agents: 
+    - agent1
+    - agent2
+    color: blue
+
+agents:
+  - name: agent1
+    role: hello
+    capabilities: say hello
+    color: green
+  - name: agent2
+    role: world
+    capabilities: say world
+    color: blue

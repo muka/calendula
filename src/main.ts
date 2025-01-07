@@ -1,4 +1,4 @@
-import 'dotenv/config'
+
 import { createAgent } from './libs/agent.js'
 import { TaskManger } from './libs/task-manger.js'
 
@@ -27,4 +27,6 @@ export const main = async () => {
   await new TaskManger().run(filename)
 }
 
-main().catch(e => console.error(e))
+if (typeof require !== 'undefined' && require.main === module) {
+  main().catch(e => console.error(e))
+}
