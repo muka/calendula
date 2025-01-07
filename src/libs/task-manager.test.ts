@@ -6,15 +6,14 @@ import { beforeEach } from 'node:test';
 import * as agent from './agent.js';
 import * as coordinator from './coordinator.js';
 
-import * as os from 'os'
+import * as os from 'os';
 
 const configDir = './test/config';
 
 describe('task manager', () => {
-  
   beforeAll(() => {
-    process.env['PROVIDER_API_KEY'] = '***'
-  })
+    process.env['PROVIDER_API_KEY'] = '***';
+  });
 
   beforeEach(() => {
     vi.spyOn(agent, 'createAgent');

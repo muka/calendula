@@ -15,8 +15,8 @@ import { McpServer } from './mcp/mcp-client.js';
 
 export interface TaskMangerConfig {
   tasksPath?: string;
-  logsPath?: string
-  skipLogs?: boolean
+  logsPath?: string;
+  skipLogs?: boolean;
 }
 
 export type CoordinatorAgentConfigYaml = Omit<
@@ -96,7 +96,7 @@ export class TaskManger {
         this.logger.info(`Starting task ${coordinatorConfig.task}`);
         const tracker = await coordinator.run(coordinatorConfig.task);
 
-        const logsBasePath = this.config?.logsPath || './logs'
+        const logsBasePath = this.config?.logsPath || './logs';
 
         if (this.config?.skipLogs !== true) {
           await fs.mkdir(`${logsBasePath}/${basename}`, { recursive: true });
