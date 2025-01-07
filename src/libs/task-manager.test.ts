@@ -23,6 +23,7 @@ describe('task manager', () => {
             }
 
             async run(messages: string | Message | Message[]) : Promise<string> {
+              expect(messages).toBeTruthy()
               return ''
             }
 
@@ -42,6 +43,7 @@ describe('task manager', () => {
             }
 
             async createPlan(objective: string): Promise<coordinator.Plan> {
+              expect(objective).toBeTruthy()
               return [
                 {
                   role: 'hello',
