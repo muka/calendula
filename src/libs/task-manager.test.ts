@@ -6,44 +6,43 @@ import { beforeEach } from 'node:test';
 import * as agent from './agent.js';
 import * as coordinator from './coordinator.js';
 
-const configDir = './test/config'
+const configDir = './test/config';
 
 describe('task manager', () => {
-
   beforeEach(() => {
-    
-    vi.spyOn(agent, 'createAgent')
+    vi.spyOn(agent, 'createAgent');
     vi.mock('./agent.js', async (importOriginal) => {
       return {
-        ...await importOriginal<typeof import('./agent.js')>(),
+        ...(await importOriginal<typeof import('./agent.js')>()),
         createAgent: async (config: agent.AgentConfig) => {
-          return new class extends agent.Agent {
+          return new (class extends agent.Agent {
             constructor(config: agent.AgentConfig) {
-              super(config)
+              super(config);
             }
 
-            async run(messages: string | Message | Message[]) : Promise<string> {
-              expect(messages).toBeTruthy()
-              return ''
+            async run(messages: string | Message | Message[]): Promise<string> {
+              expect(messages).toBeTruthy();
+              return '';
             }
+          })(config);
+        },
+      };
+    });
 
-          }(config)
-        }
-      }
-    })
-
-    vi.spyOn(coordinator, 'createCoordinator')
+    vi.spyOn(coordinator, 'createCoordinator');
     vi.mock('./coordinator.js', async (importOriginal) => {
       return {
-        ...await importOriginal<typeof import('./coordinator.js')>(),        
-        createCoordinator: async (config: coordinator.CoordinatorAgentConfig) => {
-          return new class extends coordinator.AgentCoordinator {
+        ...(await importOriginal<typeof import('./coordinator.js')>()),
+        createCoordinator: async (
+          config: coordinator.CoordinatorAgentConfig,
+        ) => {
+          return new (class extends coordinator.AgentCoordinator {
             constructor(config: coordinator.CoordinatorAgentConfig) {
-              super(config)
+              super(config);
             }
 
             async createPlan(objective: string): Promise<coordinator.Plan> {
-              expect(objective).toBeTruthy()
+              expect(objective).toBeTruthy();
               return [
                 {
                   role: 'hello',
@@ -52,49 +51,44 @@ describe('task manager', () => {
                 {
                   role: 'world',
                   task: 'say world',
-                }
-              ]
+                },
+              ];
             }
-          }(config)
-        }
-      }
-    })
-
-  })
+          })(config);
+        },
+      };
+    });
+  });
 
   afterEach(() => {
-    vi.restoreAllMocks()
-  })
+    vi.restoreAllMocks();
+  });
 
   it('list', async () => {
+    const taskManger = new TaskManger();
 
-    const taskManger = new TaskManger()
+    const list = await taskManger.listConfig(configDir);
 
-    const list = await taskManger.listConfig(configDir)
-
-    expect(list.length).toBeGreaterThan(0)
-    expect(list.filter(f => f.indexOf('test1')  > -1 ).length).toEqual(1)
+    expect(list.length).toBeGreaterThan(0);
+    expect(list.filter((f) => f.indexOf('test1') > -1).length).toEqual(1);
   });
 
   it('read', async () => {
+    const taskManger = new TaskManger();
 
-    const taskManger = new TaskManger()
+    const list = await taskManger.listConfig(configDir);
+    expect(list.length).toBeGreaterThan(0);
 
-    const list = await taskManger.listConfig(configDir)
-    expect(list.length).toBeGreaterThan(0)
-
-    const taskset = await taskManger.readConfig(list[0])
-    expect(taskset).not.toBeFalsy()
-    
+    const taskset = await taskManger.readConfig(list[0]);
+    expect(taskset).not.toBeFalsy();
   });
 
   it('run', async () => {
     const taskManger = new TaskManger({
-      tasksPath: './test/config'
-    })
-    const result = await taskManger.run('test1')
-    expect(result).not.toBeFalsy()
-    expect(result['test1']).not.toBeFalsy()
+      tasksPath: './test/config',
+    });
+    const result = await taskManger.run('test1');
+    expect(result).not.toBeFalsy();
+    expect(result['test1']).not.toBeFalsy();
   });
-
 });
